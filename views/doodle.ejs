@@ -95,11 +95,35 @@ html, body{
 
 <div class="container" id="doodle">
   <img src="/attachment/<%= id %>" title="<%= doodle.title %>" width="80%"/>
+
+  <div id="datetime" style="text-align: right">
+  </div>
 </div>
+
 
 <script>
 $(function(){
+  var ts = parseInt( '<%= doodle.timestamp %>' );
+  var dt = timestamp2datetime( ts );
+  $('#datetime').html( dt );
 });
+
+function timestamp2datetime( ts ){
+  if( ts ){
+    var dt = new Date( ts );
+    var yyyy = dt.getFullYear();
+    var mm = dt.getMonth() + 1;
+    var dd = dt.getDate();
+    var hh = dt.getHours();
+    var nn = dt.getMinutes();
+    var ss = dt.getSeconds();
+    var datetime = yyyy + '-' + ( mm < 10 ? '0' : '' ) + mm + '-' + ( dd < 10 ? '0' : '' ) + dd
+      + ' ' + ( hh < 10 ? '0' : '' ) + hh + ':' + ( nn < 10 ? '0' : '' ) + nn + ':' + ( ss < 10 ? '0' : '' ) + ss;
+    return datetime;
+  }else{
+    return "";
+  }
+}
 </script>
 </body>
 </html>
