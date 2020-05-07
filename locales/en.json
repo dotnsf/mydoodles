@@ -27,5 +27,6 @@
 	"common.deleteimage.button": "DELETE",
 	"common.deleteimage.confirm1": "You are about to delete image with id = ",
 	"common.deleteimage.confirm2": " . OK?",
+	"common.wanttotry": "Try!",
   "dummy": "dummy"
 }

@@ -27,5 +27,6 @@
 	"common.deleteimage.button": "削除",
 	"common.deleteimage.confirm1": "ID : ",
 	"common.deleteimage.confirm2": " の画像を削除しますか？",
+	"common.wanttotry": "自分も試す！",
 	"dummy": "dummy"
 }
