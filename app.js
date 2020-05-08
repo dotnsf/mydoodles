@@ -244,6 +244,8 @@ app.get( '/images', function( req, res ){
           }
         });
 
+        images.sort( sortByTimestampRev );
+
         if( offset || limit ){
           if( offset + limit > total ){
             images = images.slice( offset );
@@ -283,6 +285,8 @@ app.get( '/search/:uuid', function( req, res ){
         result.docs.forEach( function( doc ){
           images.push( doc );
         });
+
+        images.sort( sortByTimestampRev );
 
         if( offset || limit ){
           if( offset + limit > total ){
@@ -339,6 +343,28 @@ function timestamp2datetime( ts ){
   }else{
     return "";
   }
+}
+
+function sortByTimestamp( a, b ){
+  var r = 0;
+  if( a.timestamp < b.timestamp ){
+    r = -1;
+  }else if( a.timestamp > b.timestamp ){
+    r = 1;
+  }
+
+  return r;
+}
+
+function sortByTimestampRev( a, b ){
+  var r = 0;
+  if( a.timestamp < b.timestamp ){
+    r = 1;
+  }else if( a.timestamp > b.timestamp ){
+    r = -1;
+  }
+
+  return r;
 }
 
 

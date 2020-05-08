@@ -53,8 +53,14 @@ html, body{
 </style>
 </head>
 <body>
-<div id="title">
-  <input type="text" class="form-control" id="title" name="title" placeholder="<%= __('common.title') %>"/>
+<div id="title_div">
+  <table class="table">
+    <tr><td>
+      <input type="text" class="form-control" id="title" name="title" placeholder="<%= __('common.title') %>"/>
+    </td><td>
+      <a href="#" class="btn btn-xs btn-info" data-toggle="modal" data-target="#historyModal" id="history_btn"><%= __('common.history') %></a>
+    </td></tr>
+  </table>
 </div>
 
 <select id="select_color" name="select_color">
@@ -84,6 +90,11 @@ html, body{
   <option value="8">8</option>
   <option value="9">9</option>
   <option value="10">10</option>
+  <option value="11">11</option>
+  <option value="12">12</option>
+  <option value="13">13</option>
+  <option value="14">14</option>
+  <option value="15">15</option>
 </select>
 
 <input type="button" class="btn btn-xs btn-secondary p-0" id="setbg_btn" value="<%= __('common.button.background') %>" onClick="setBG();"/>
@@ -91,18 +102,29 @@ html, body{
 <div id="canvas_div">
   <div id="cdiv"></div>
 
-  <br/>
   <input type="button" class="btn btn-xs" id="undo_btn" value="<" onClick="undo();" disabled="disabled"/>
   <input type="button" class="btn btn-xs btn-warning" value="<%= __('common.button.reset') %>" onClick="resetCanvas();"/>
   <input type="button" class="btn btn-xs btn-primary" id="save_btn" value="<%= __('common.button.save') %>" onClick="save();"/>
   <input type="button" class="btn btn-xs" id="redo_btn" value=">" onClick="redo();" disabled="disabled"/>
 </div>
 
-<div class="container" id="history" style="position: relative; top: 50px;">
-  <table class="table table-striped">
-    <tbody id="history_body">
-    </tbody>
-  </table>
+<div class="modal bd-example-modal-lg fade" id="historyModal" tabindex="-1" role="dialog" aria-labbelledby="historyModal" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="historyModalLabel"><%= __('common.history') %></h4>
+      </div>
+      <div class="modal-body" id="historymodal-body">
+        <table class="table table-bordered">
+          <tbody id="history_body">
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer btn-center">
+        <button type="button" class="btn btn-primary modal_button" data-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -139,12 +161,13 @@ function init(){
       success: function( result ){
         if( result && result.status && result.images ){
           result.images.forEach( function( image ){
+            //console.log( image );
             var ts = parseInt( image.timestamp );
             var dt = timestamp2datetime( ts );
             var tr = '<tr>'
-              + '<td><a target="_blank" href="/doodle/' + image._id + '"><img src="/attachment/' + image._id + '" width="300"/></a></td>'
-              + '<td>' + image.title + '</td>'
-              + '<td>' + dt + '</td>'
+              + '<td><a target="_blank" href="/doodle/' + image._id + '"><img src="/attachment/' + image._id + '" width="40%"/></a></td>'
+              + '<td><a target="_blank" href="/doodle/' + image._id + '">' + image.title + '</a></td>'
+              + '<td><a target="_blank" href="/doodle/' + image._id + '">' + dt + '</a></td>'
               + '<td><button class="btn btn-xs btn-danger" onClick="deleteImage(\'' + image._id + '\');">' + "<%= __('common.deleteimage.button') %>" + '</button></td>'
               + '</tr>';
             $('#history_body').append( tr );
@@ -470,9 +493,9 @@ function save(){
     success: function( data, dataType ){
       console.log( data );
 
-      //var id = data.id;
-      //location.href = './doodle/' + id;
-      location.href = '/';
+      var id = data.id;
+      location.href = './doodle/' + id;
+      //location.href = '/';
     },
     error: function( jqXHR, textStatus, errorThrown ){
       console.log( textStatus + ': ' + errorThrown );
@@ -596,8 +619,9 @@ function generateUUID(){
   if( did == null ){
     var s = 1000;
     did = ( new Date().getTime().toString(16) ) + Math.floor( s * Math.random() ).toString(16);
-    document.cookie = ( "deviceid=" + did );
   }
+  var maxage = 60 * 60 * 24 * 365 * 100; //. 100years
+  document.cookie = ( "deviceid=" + did + '; max-age=' + maxage );
 
   return did;
 }
