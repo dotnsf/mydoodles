@@ -89,7 +89,7 @@ html, body{
   <!-- navi// -->
 
 
-<div class="container" id="dummy" style="position: relative; top: 20px;">
+<div class="container" id="dummy" style="position: relative; top: 20px; text-align: right">
 </div>
 
 <div class="container" id="doodle" style="position: relative: top: 20px;">
@@ -111,7 +111,18 @@ $(function(){
   var ts = parseInt( '<%= doodle.timestamp %>' );
   var dt = timestamp2datetime( ts );
   $('#datetime').html( dt );
+
+  var image_uuid = '<%= doodle.uuid %>';
+  var your_uuid = getUUID();
+  if( your_uuid && your_uuid == image_uuid ){
+    var edit_btn = '<button class="btn btn-warning btn-xs" onClick="editDoodle(\'<%= doodle._id %>\');"><%= __('common.doodle.edit') %></button>';
+    $('#dummy').html( edit_btn );
+  }
 });
+
+function editDoodle( id ){
+  location.href = '/?id=' + id;
+}
 
 function timestamp2datetime( ts ){
   if( ts ){
@@ -128,6 +139,20 @@ function timestamp2datetime( ts ){
   }else{
     return "";
   }
+}
+
+function getUUID(){
+  //. Cookie の値を調べる
+  var did = null;
+  cookies = document.cookie.split(";");
+  for( var i = 0; i < cookies.length; i ++ ){
+    var str = cookies[i].split("=");
+    if( unescape( str[0] ) == " deviceid" ){
+      did = unescape( unescape( str[1] ) );
+    }
+  }
+
+  return did;
 }
 </script>
 </body>

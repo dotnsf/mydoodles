@@ -25,6 +25,7 @@
 	"common.doodle.share_twitter.title": "Share this page with Twitter",
 	"common.doodle.share_facebook.title": "Share this page with Facebook",
 	"common.doodle.share_line.title": "Share this page with LINE",
+	"common.doodle.edit": "EDIT",
 	"common.deleteimage.button": "DELETE",
 	"common.deleteimage.confirm1": "You are about to delete image with id = ",
 	"common.deleteimage.confirm2": " . OK?",

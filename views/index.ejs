@@ -47,8 +47,9 @@ html, body{
 #mycanvas{
   border: 1px solid #333;
 }
-#comment{
-  width: 100%;
+#myimg{
+  position: absolute;
+  top: -2000px;
 }
 </style>
 </head>
@@ -127,6 +128,10 @@ html, body{
   </div>
 </div>
 
+<div id="myimg_div">
+  <img id="myimg"/>
+</div>
+
 <script>
 var uuid = generateUUID();
 console.log( 'uuid = ' + uuid );
@@ -178,6 +183,11 @@ function init(){
         console.log( e1, e2 );
       }
     });
+<% if( doodle ){ %>
+    if( uuid == '<%= doodle.uuid %>' ){
+      $('#myimg').prop( 'src', '/attachment/<%= doodle._id %>' );
+    }
+<% } %>
   }
 
   $('#cdiv').html( '<canvas width="80%" height="50%" id="mycanvas"></canvas>' );
@@ -435,6 +445,13 @@ function resized(){
     canvas.width = browserWidth * 0.8;
     canvas.height = browserHeight * 0.6;
   }
+<% if( doodle ){ %>
+  if( uuid == '<%= doodle.uuid %>' ){
+    var ctx = canvas.getContext( '2d' );
+    var myimg = document.getElementById( 'myimg' );
+    ctx.drawImage( myimg, 0, 0 );
+  }
+<% } %>
 }
 
 function resetCanvas( no_reset_unredo ){

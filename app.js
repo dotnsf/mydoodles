@@ -68,14 +68,19 @@ i18n.configure({
 app.use( i18n.init );
 
 app.get( '/', function( req, res ){
-  res.render( 'index', {} );
+  var id = req.query.id;
+  if( id && db ){
+    db.get( id, { include_docs: true }, function( err, body, header ){
+      if( err ){
+        res.render( 'index', { id: id, doodle: null } );
+      }else{
+        res.render( 'index', { id: id, doodle: body } );
+      }
+    });
+  }else{
+    res.render( 'index', { doodle: null } );
+  }
 });
-
-/*
-app.get( '/airpen', function( req, res ){
-  res.render( 'airpen', {} );
-});
-*/
 
 app.get( '/doodle/:id', function( req, res ){
   var id = req.params.id;
@@ -85,7 +90,6 @@ app.get( '/doodle/:id', function( req, res ){
       if( err ){
         res.render( 'doodle', { id: id, doodle: doodle } );
       }else{
-        //. body.title が空？
         res.render( 'doodle', { id: id, doodle: body } );
       }
     });

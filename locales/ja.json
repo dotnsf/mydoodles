@@ -25,6 +25,7 @@
 	"common.doodle.share_twitter.title": "このページを Twitter でシェア",
 	"common.doodle.share_facebook.title": "このページを Facebook でシェア",
 	"common.doodle.share_line.title": "このページを LINE でシェア",
+	"common.doodle.edit": "編集",
 	"common.deleteimage.button": "削除",
 	"common.deleteimage.confirm1": "ID : ",
 	"common.deleteimage.confirm2": " の画像を削除しますか？",
