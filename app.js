@@ -71,9 +71,11 @@ app.get( '/', function( req, res ){
   res.render( 'index', {} );
 });
 
+/*
 app.get( '/airpen', function( req, res ){
   res.render( 'airpen', {} );
 });
+*/
 
 app.get( '/doodle/:id', function( req, res ){
   var id = req.params.id;
@@ -93,7 +95,29 @@ app.get( '/doodle/:id', function( req, res ){
 });
 
 app.get( '/view', function( req, res ){
-  res.render( 'view', {} );
+  var images = [];
+  if( db ){
+    db.list( { include_docs: true }, function( err, body ){
+      if( err ){
+        res.render( 'view', { images: images, error: err } );
+      }else{
+        var total = body.total_rows;
+        body.rows.forEach( function( doc ){
+          var _doc = JSON.parse(JSON.stringify(doc.doc));
+          if( _doc._id.indexOf( '_' ) !== 0 && _doc.type && _doc.type == 'image' ){
+            _doc.datetime = timestamp2datetime( parseInt( _doc.timestamp ) );
+            images.push( _doc );
+          }
+        });
+
+        images.sort( sortByTimestampRev );
+
+        res.render( 'view', { images: images } );
+      }
+    });
+  }else{
+    res.render( 'view', { images: images, error: 'db not ready.' } );
+  }
 });
 
 
