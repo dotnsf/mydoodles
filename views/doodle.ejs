@@ -62,7 +62,7 @@ html, body{
     <div class="collapse navbar-collapse">
         <ul class="nav navbar-nav mr-auto">
         </ul>
-        <ul class="nav navbar-nav">   
+        <ul class="nav navbar-nav" id="share_buttons">   
       	  <li class="nav-item">
             <!-- twitter -->
             <a class="nav-link" id="share_twitter" title="<%= __('common.doodle.share_twitter.title') %>" href="https://twitter.com/share?url=https://mydoodles.mybluemix.net/doodle/<%= id %>&text=%20<%= doodle.title %>&hashtags=mydoodles" target="_blank">
@@ -115,8 +115,14 @@ $(function(){
   var image_uuid = '<%= doodle.uuid %>';
   var your_uuid = getUUID();
   if( your_uuid && your_uuid == image_uuid ){
-    var edit_btn = '<button class="btn btn-warning btn-xs" onClick="editDoodle(\'<%= doodle._id %>\');"><%= __('common.doodle.edit') %></button>';
-    $('#dummy').html( edit_btn );
+    //var edit_btn = '<button class="btn btn-warning btn-xs" onClick="editDoodle(\'<%= doodle._id %>\');"><%= __('common.doodle.edit') %></button>';
+    //$('#dummy').html( edit_btn );
+    var edit_button = '<li class="nav-item">'
+      + '<a class="nav-link" href="#">'
+      + '<button class="btn btn-warning btn-xs py-0" onClick="editDoodle(\'<%= doodle._id %>\');"><i class="fas fa-edit"></i></button>'
+      + '</a>'
+      + '</li>';
+    $('#share_buttons').append( edit_button );
   }
 });
 
