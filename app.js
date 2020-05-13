@@ -136,7 +136,13 @@ app.post( '/image', function( req, res ){
     var imgfilename = req.file.filename;
     var filename = req.file.originalname;
 
-    var image_id = uuidv1();
+    var image_id = req.body._id;
+    var image_rev = null;
+    if( image_id ){
+      image_rev = req.body._rev;
+    }else{
+      image_id = uuidv1();
+    }
     var img = fs.readFileSync( imgpath );
     var img64 = new Buffer( img ).toString( 'base64' );
 
@@ -154,7 +160,10 @@ app.post( '/image', function( req, res ){
         }
       }
     };
-    db.insert( params, image_id, function( err, body, header ){
+    if( image_rev ){
+      params._rev = image_rev;
+    }
+    db.insert( params, /*image_id,*/ function( err, body, header ){
       if( err ){
         console.log( err );
         var p = JSON.stringify( { status: false, error: err }, null, 2 );
@@ -213,11 +222,11 @@ app.get( '/image/:id', function( req, res ){
   }
 });
 
-app.delete( '/image', function( req, res ){
+app.delete( '/image/:id', function( req, res ){
   res.contentType( 'application/json; charset=utf-8' );
 
   if( db ){
-    var id = req.query.id;
+    var id = req.params.id;
 
     //. Cloudant から削除
     db.get( id, null, function( err1, body1, header1 ){
@@ -302,7 +311,7 @@ app.get( '/search/:uuid', function( req, res ){
   var uuid = req.params.uuid;
 
   if( db ){
-    db.find( { selector: { uuid: { "$eq": uuid } }, fields: [ "_id", "_rev", "title", "timestamp", "uuid" ] }, function( err, result ){
+    db.find( { selector: { uuid: { "$eq": uuid } }, fields: [ "_id", "_rev", "filename", "type", "title", "timestamp", "uuid" ] }, function( err, result ){
       if( err ){
         res.status( 400 );
         res.write( JSON.stringify( { status: false, message: err }, 2, null ) );
@@ -311,7 +320,9 @@ app.get( '/search/:uuid', function( req, res ){
         var total = result.docs.length;
         var images = [];
         result.docs.forEach( function( doc ){
-          images.push( doc );
+          if( doc._id.indexOf( '_' ) !== 0 && doc.type && doc.type == 'image' ){
+            images.push( doc );
+          }
         });
 
         images.sort( sortByTimestampRev );
@@ -329,6 +340,98 @@ app.get( '/search/:uuid', function( req, res ){
         res.end();
       }
     });
+  }else{
+    res.status( 400 );
+    res.write( JSON.stringify( { status: false, message: 'db is failed to initialize.' }, 2, null ) );
+    res.end();
+  }
+});
+
+//. feature extension for #3
+app.post( '/migrage_from', function( req, res ){
+  res.contentType( 'application/json; charset=utf-8' );
+
+  if( db ){
+    var from_uuid = req.body.from_uuid;
+    var to_uuid = req.body.to_uuid;
+    if( from_uuid && to_uuid ){
+      db.find( { selector: { uuid: { "$eq": from_uuid } }, fields: [ "_id", "_rev", "filename", "type", "title", "timestamp", "uuid" ] }, function( err, result ){
+        if( err ){
+          res.status( 400 );
+          res.write( JSON.stringify( { status: false, message: err }, 2, null ) );
+          res.end();
+        }else{
+          var images = [];
+          result.docs.forEach( function( doc ){
+            if( doc._id.indexOf( '_' ) !== 0 && doc.type && doc.type == 'image' ){
+              doc.migrate_to = to_uuid;
+              images.push( doc );
+            }
+          });
+
+          db.bulk( { docs: images }, function( err, result ){
+            if( err ){
+              res.status( 400 );
+              res.write( JSON.stringify( { status: false, message: err }, 2, null ) );
+              res.end();
+            }else{
+              res.write( JSON.stringify( { status: true, num: images.length }, 2, null ) );
+              res.end();
+            }
+          });
+        }
+      });
+    }else{
+      res.status( 400 );
+      res.write( JSON.stringify( { status: false, message: 'uuid is not specified' }, 2, null ) );
+      res.end();
+    }
+  }else{
+    res.status( 400 );
+    res.write( JSON.stringify( { status: false, message: 'db is failed to initialize.' }, 2, null ) );
+    res.end();
+  }
+});
+
+app.post( '/migrage_to', function( req, res ){
+  res.contentType( 'application/json; charset=utf-8' );
+
+  if( db ){
+    var from_uuid = req.body.from_uuid;
+    var to_uuid = req.body.to_uuid;
+    if( from_uuid && to_uuid ){
+      db.find( { selector: { uuid: { "$eq": from_uuid } }, fields: [ "_id", "_rev", "filename", "type", "title", "timestamp", "uuid" ] }, function( err, result ){
+        if( err ){
+          res.status( 400 );
+          res.write( JSON.stringify( { status: false, message: err }, 2, null ) );
+          res.end();
+        }else{
+          var images = [];
+          result.docs.forEach( function( doc ){
+            if( doc._id.indexOf( '_' ) !== 0 && doc.type && doc.type == 'image' && doc.migrate_to && doc.migrate_to == to_uuid ){
+              delete doc.migrate_to;
+              doc.uuid = to_uuid;
+              images.push( doc );
+            }
+          });
+
+          db.bulk( { docs: images }, function( err, result ){
+            if( err ){
+              res.status( 400 );
+              res.write( JSON.stringify( { status: false, message: err }, 2, null ) );
+              res.end();
+            }else{
+              res.write( JSON.stringify( { status: true, num: images.length }, 2, null ) );
+              res.end();
+            }
+          });
+        }
+      });
+    }else{
+      res.status( 400 );
+      res.write( JSON.stringify( { status: false, message: 'uuid is not specified' }, 2, null ) );
+      res.end();
+    }
   }else{
     res.status( 400 );
     res.write( JSON.stringify( { status: false, message: 'db is failed to initialize.' }, 2, null ) );

@@ -135,6 +135,8 @@ html, body{
 <script>
 var uuid = generateUUID();
 console.log( 'uuid = ' + uuid );
+var o_id = null;
+var o_rev = null;
 
 var base_url = location.origin + '/';
 var undos = [];
@@ -186,6 +188,9 @@ function init(){
 <% if( doodle ){ %>
     if( uuid == '<%= doodle.uuid %>' ){
       $('#myimg').prop( 'src', '/attachment/<%= doodle._id %>' );
+      $('#title').val( '<%= doodle.title %>' );
+      o_id = '<%= doodle._id %>';
+      o_rev = '<%= doodle._rev %>';
     }
 <% } %>
   }
@@ -501,6 +506,10 @@ function save(){
   formData.append( 'timestamp', ( new Date() ).getTime() );
   formData.append( 'title', title );
   formData.append( 'uuid', uuid );
+  if( o_id && o_rev ){
+    formData.append( '_id', o_id );
+    formData.append( '_rev', o_rev );
+  }
   $.ajax({
     type: 'POST',
     url: '/image',
