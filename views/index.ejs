@@ -135,6 +135,7 @@ html, body{
 <script>
 var uuid = generateUUID();
 console.log( 'uuid = ' + uuid );
+$('#historyModalLabel').html( '<%= __('common.history') %> : ' + uuid );
 var o_id = null;
 var o_rev = null;
 
