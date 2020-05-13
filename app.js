@@ -163,7 +163,7 @@ app.post( '/image', function( req, res ){
     if( image_rev ){
       params._rev = image_rev;
     }
-    db.insert( params, /*image_id,*/ function( err, body, header ){
+    db.insert( params, function( err, body, header ){
       if( err ){
         console.log( err );
         var p = JSON.stringify( { status: false, error: err }, null, 2 );
@@ -348,14 +348,14 @@ app.get( '/search/:uuid', function( req, res ){
 });
 
 //. feature extension for #3
-app.post( '/migrage_from', function( req, res ){
+app.post( '/migrate_from', function( req, res ){
   res.contentType( 'application/json; charset=utf-8' );
 
   if( db ){
     var from_uuid = req.body.from_uuid;
     var to_uuid = req.body.to_uuid;
     if( from_uuid && to_uuid ){
-      db.find( { selector: { uuid: { "$eq": from_uuid } }, fields: [ "_id", "_rev", "filename", "type", "title", "timestamp", "uuid" ] }, function( err, result ){
+      db.find( { selector: { uuid: { "$eq": from_uuid } }, fields: [ "_id", "_rev", "filename", "type", "title", "timestamp", "uuid", "_attachments" ] }, function( err, result ){
         if( err ){
           res.status( 400 );
           res.write( JSON.stringify( { status: false, message: err }, 2, null ) );
@@ -393,14 +393,14 @@ app.post( '/migrage_from', function( req, res ){
   }
 });
 
-app.post( '/migrage_to', function( req, res ){
+app.post( '/migrate_to', function( req, res ){
   res.contentType( 'application/json; charset=utf-8' );
 
   if( db ){
     var from_uuid = req.body.from_uuid;
     var to_uuid = req.body.to_uuid;
     if( from_uuid && to_uuid ){
-      db.find( { selector: { uuid: { "$eq": from_uuid } }, fields: [ "_id", "_rev", "filename", "type", "title", "timestamp", "uuid" ] }, function( err, result ){
+      db.find( { selector: { uuid: { "$eq": from_uuid } }, fields: [ "_id", "_rev", "filename", "type", "title", "timestamp", "uuid", "migrate_to", "_attachments" ] }, function( err, result ){
         if( err ){
           res.status( 400 );
           res.write( JSON.stringify( { status: false, message: err }, 2, null ) );
