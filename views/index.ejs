@@ -114,6 +114,9 @@ html, body{
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title" id="historyModalLabel"><%= __('common.history') %></h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
       <div class="modal-body" id="historymodal-body">
         <table class="table table-bordered">
@@ -122,7 +125,8 @@ html, body{
         </table>
       </div>
       <div class="modal-footer btn-center">
-        <button type="button" class="btn btn-primary modal_button" data-dismiss="modal">OK</button>
+        <button type="button" class="btn btn-info btn-xs" onClick="migrateFrom();"><%= __('common.migrate.button.from') %></button>
+        <button type="button" class="btn btn-success btn-xs" onClick="migrateTo();"><%= __('common.migrate.button.to') %></button>
       </div>
     </div>
   </div>
@@ -631,6 +635,52 @@ function deleteImage( id ){
     });
   }
 }
+
+//. #3
+function migrateFrom(){
+  if( window.confirm( "<%= __('common.migrate.from.confirm') %>" ) ){
+    var uuid_to = window.prompt( "<%= __('common.migrate.uuid.from') %>", "" );
+    if( uuid_to ){
+      if( window.confirm( "<%= __('common.migrate.uuid.from.confirm') %> : " + uuid_to ) ){
+        var uuid_from = uuid;
+        $.ajax({
+          type: "POST",
+          url: "./migrate_from",
+          data: { from_uuid: uuid_from, to_uuid: uuid_to },
+          success: function( data ){
+            location.href = '/';
+          },
+          error: function( jqXHR, textStatus, errorThrown ){
+            console.log( textStatus + " : " + errorThrown );
+          }
+        });
+      }
+    }
+  }
+}
+
+function migrateTo(){
+  if( window.confirm( "<%= __('common.migrate.to.confirm') %>" ) ){
+    var uuid_from = window.prompt( "<%= __('common.migrate.uuid.to') %>", "" );
+    if( uuid_from ){
+      if( window.confirm( "<%= __('common.migrate.uuid.to.confirm') %> : " + uuid_from ) ){
+        var uuid_to = uuid;
+        $.ajax({
+          type: "POST",
+          url: "./migrate_to",
+          data: { from_uuid: uuid_from, to_uuid: uuid_to },
+          success: function( data ){
+            location.href = '/';
+          },
+          error: function( jqXHR, textStatus, errorThrown ){
+            console.log( textStatus + " : " + errorThrown );
+          }
+        });
+      }
+    }
+  }
+}
+
 
 function generateUUID(){
   //. Cookie の値を調べて、有効ならその値で、空だった場合は生成する

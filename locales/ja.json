@@ -30,5 +30,13 @@
 	"common.deleteimage.confirm1": "ID : ",
 	"common.deleteimage.confirm2": " の画像を削除しますか？",
 	"common.wanttotry": "自分も試す！",
+	"common.migrate.button.from": "データ移行",
+	"common.migrate.button.to": "データ取込",
+	"common.migrate.from.confirm": "このブラウザのデータを他のブラウザ環境に移行します。移行完了後はこのブラウザではデータは見れなくなります。本当に移行しますか？",
+	"common.migrate.to.confirm": "他のブラウザからのデータをこの環境に取り込みます。取り込み完了後は元のブラウザではデータは見れなくなります。本当に取り込みますか？",
+	"common.migrate.uuid.from": "移行先環境の UUID を入力してください",
+	"common.migrate.uuid.to": "取り込み元環境の UUID を入力してください",
+	"common.migrate.uuid.from.confirm": "移行先環境の UUID は正しいですか？",
+	"common.migrate.uuid.to.confirm": "取り込み元環境の UUID は正しいですか？",
 	"dummy": "dummy"
 }

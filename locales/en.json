@@ -30,5 +30,13 @@
 	"common.deleteimage.confirm1": "You are about to delete image with id = ",
 	"common.deleteimage.confirm2": " . OK?",
 	"common.wanttotry": "Try!",
+	"common.migrate.button.from": "Transport",
+	"common.migrate.button.to": "Migrate",
+	"common.migrate.from.confirm": "This operation transport your data to anohter browser. You would NOT be able to see your data in this browser. Are you really going to proceed ?",
+	"common.migrate.to.confirm": "This operation migrate data from another browser. Original data would NOT be able to be seen from original browser. Are you really going to proceed ?",
+	"common.migrate.uuid.from": "Input UUID of transportation to",
+	"common.migrate.uuid.to": "Input UUID of migration from",
+	"common.migrate.uuid.from.confirm": "Your data is going to be transported. OK?",
+	"common.migrate.uuid.to.confirm": "Your are going to migrate data from. OK?",
   "dummy": "dummy"
 }
