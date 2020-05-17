@@ -4,7 +4,9 @@
 
 Hand-drawn doodle sharing services.
 
-Now this service supports twitter, facebook, and line only.
+Now this service supports twitter, facebook, and line.
+
+You can share your work as **My Design** in [Animal Crossing](https://www.nintendo.co.jp/switch/acbaa/index.html).
 
 
 ## Service URL
@@ -28,6 +30,18 @@ https://mydoodles.mybluemix.net/
 1. First the one, who want to **transport your data to** other environment, operate **Transport** method in history dialog. He/She need to specify environmental ID for destination.
 
 2. Next the one, who want to **migrate data from** other environment, operate **Migrate** method in history dialog. He/She need to specify environmental ID for source.
+
+
+## References
+
+- https://qiita.com/yossaito/items/6ffb1b8bb3f9d91107b8
+
+- http://dot-e-nanika.com/
+
+- https://karaage.hatenadiary.jp/entry/2020/03/30/073000
+
+- https://karaage.hatenadiary.jp/entry/20121201/1354330494
+
 
 
 ## Licensing
