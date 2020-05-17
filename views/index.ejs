@@ -754,7 +754,7 @@ function generateUUID(){
   cookies = document.cookie.split(";");
   for( var i = 0; i < cookies.length; i ++ ){
     var str = cookies[i].split("=");
-    if( unescape( str[0] ) == " deviceid" ){
+    if( unescape( str[0] ) == "deviceid" ){
       did = unescape( unescape( str[1] ) );
     }
   }
@@ -765,10 +765,18 @@ function generateUUID(){
   }
 
   // https://qiita.com/yossaito/items/6ffb1b8bb3f9d91107b8
-  var maxage = 60 * 60 * 24 * 365 * 100; //. 100years
+  //var maxage = 60 * 60 * 24 * 365 * 100; //. 100years
   //var maxage = 60 * 60 * 24 * 7; //. 7 days(less than 8 days https://qiita.com/yossaito/items/6ffb1b8bb3f9d91107b8)
   //document.cookie = ( "deviceid=" + did + '; max-age=' + maxage );
-  var value = ( "deviceid=" + did + '; max-age=' + maxage );
+
+  //.document.cookie = ( "deviceid=" + did + '; path=/' );
+
+  var dt = ( new Date() );
+  var ts = dt.getTime();
+  ts += 1000 * 60 * 60 * 24 * 365 * 100;
+  dt.setTime( ts );
+
+  var value = ( "deviceid=" + did + '; expires=' + dt.toUTCString() + '; path=/' );
   $.ajax({
     url: '/setcookie',
     type: 'POST',
