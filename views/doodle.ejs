@@ -244,6 +244,19 @@ function qrCode( id ){
     112   //. dummy
   ];
 
+  //. カラーパレット変換テーブル
+  var color_palette_table = [];
+  for( var i = 0; i < 16; i ++ ){
+    for( var j = 0; j < 9; j ++ ){
+      var v = 16 * i + j;
+      color_palette_table.push( v );
+    }
+  }
+  for( var i = 0; i < 15; i ++ ){
+    var v = 16 * i + 15;
+    color_palette_table.push( v );
+  }
+
   //. 画像データ
   var imgdata = [];
   var imagedata = ctx.getImageData( 0, 0, 32, 32 );
@@ -326,7 +339,7 @@ function qrCode( id ){
 
     //. Color Pallete
     for( var i = 0; i < color_palette.length; i ++ ){
-      data.push( color_palette[i] );
+      data.push( color_palette_table[color_palette[i]-1] );
     }
 
     //. *7, *8, *9, *10, *11
@@ -377,9 +390,10 @@ function qrCode( id ){
 function getColorIndex( rr, gg, bb ){
   var idx = -1;  //. 0-12 ただし背景色は 15 ？
 
-  //if( rr == 0 && gg == 0 & bb == 0 ){
-  //  idx = 15;
-  //}else{
+  if( rr == 0 && gg == 0 & bb == 0 ){
+    //idx = 15;
+    idx = 0;     //. 15 にするとおかしくなってしまうので 0 とする
+  }else{
     /* この 13 色中のどの色に近いか、を調べて、インデックスを返す
     //. カラーパレット
     var color_palette = [  //rrggbb
@@ -427,7 +441,7 @@ function getColorIndex( rr, gg, bb ){
         mx = d;
       }
     }
-  //}
+  }
 
   return idx;
 }
