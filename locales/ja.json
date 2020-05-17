@@ -30,6 +30,7 @@
 	"common.deleteimage.confirm1": "ID : ",
 	"common.deleteimage.confirm2": " の画像を削除しますか？",
 	"common.wanttotry": "自分も試す！",
+	"common.migrate.button.siritori": "しりとり",
 	"common.migrate.button.from": "データ移行",
 	"common.migrate.button.to": "データ取込",
 	"common.migrate.from.confirm": "このブラウザのデータを他のブラウザ環境に移行します。移行完了後はこのブラウザではデータは見れなくなります。本当に移行しますか？",

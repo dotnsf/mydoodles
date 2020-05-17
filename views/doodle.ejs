@@ -44,11 +44,8 @@ html, body{
   font-size: 20px;
   color: #333;
 }
-#mycanvas{
-  border: 1px solid #333;
-}
-#comment{
-  width: 100%;
+.hide{
+  display: none;
 }
 </style>
 </head>
@@ -83,6 +80,15 @@ html, body{
               <img src="/share_line.png"/>
             </a>
           </li>
+
+      	  <li class="nav-item">
+            <!-- QRCode -->
+            <!--
+            <a class="nav-link" id="share_qrcode" title="" href="#">
+              <button class="btn btn-secondary btn-xs py-0" onClick="qrCode('<%= doodle._id %>');"><i class="fas fa-qrcode"></i></button>
+            </a>
+            -->
+          </li>
         </ul>
     </div>
   </nav>
@@ -105,6 +111,27 @@ html, body{
   </div>
 </div>
 
+<div class="modal bd-example-modal-lg fade" id="qrcodeModal" tabindex="-1" role="dialog" aria-labbelledby="qrcodeModal" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="qrcodeModalLabel"><%= doodle.title %></h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="qrcodemodal-body">
+        <img id="qrcode_img"/>
+      </div>
+      <div class="modal-footer btn-center">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="hide">
+  <canvas id="canvas" width="32" height="32"></canvas>
+</div>
 
 <script>
 $(function(){
@@ -124,6 +151,18 @@ $(function(){
       + '</li>';
     $('#share_buttons').append( edit_button );
   }
+
+  //. #8
+  var img = new Image();
+  img.src = '/attachment/<%= id %>';
+  img.onload = () => {
+    var canvas = document.getElementById( 'canvas' );
+    if( !canvas || !canvas.getContext ){
+      return false;
+    }
+    var ctx = canvas.getContext( '2d' );
+    ctx.drawImage( img, 0, 0, canvas.width, canvas.height );
+  };
 });
 
 function editDoodle( id ){
@@ -159,6 +198,219 @@ function getUUID(){
   }
 
   return did;
+}
+
+function qrCode( id ){
+  //console.log( 'qrCode: id = ' + id );
+
+  var canvas = document.getElementById( 'canvas' );
+  if( !canvas || !canvas.getContext ){
+    return false;
+  }
+  var ctx = canvas.getContext( '2d' );
+
+  //. タイトル
+  var title = 'My Work'; //'<%= doodle.title %>';
+
+  //. 作者
+  var author = 'My Doodles';
+
+  //. Town
+  var town = 'My Town';
+
+  //. カラーパレット
+  var color_palette = [
+    149,  //. transparent #cccccc
+    159,  //. black       #000000
+    145,  //. white       #ffffff
+    5,    //. red         #ff0000
+    86,   //. blue        #0000ff
+    95,   //. green       #00ff00
+    68,   //. yellow      #ffff00
+    122,  //. cyan        #00ffff
+    41,   //. magenta     #ff00ff
+    153,  //. gray        #808080
+    47,   //. pink        #ef8f9c
+    30,   //. beige       #ead2ad
+    59,   //. brown       #7c6035
+    111,  //. dummy
+    112   //. dummy
+  ];
+
+  //. 画像データ
+  var imgdata = [];
+  var imagedata = ctx.getImageData( 0, 0, 32, 32 );
+  for( var i = 0; i < imagedata.height; i ++ ){
+    for( var j = 0; j < imagedata.width; j += 2 ){
+      var idx = ( j + i * imagedata.width ) * 4;
+
+  		var r1 = imagedata.data[idx];
+  		var g1 = imagedata.data[idx+1];
+      var b1 = imagedata.data[idx+2];
+      var color_index1 = getColorIndex( r1, g1, b1 );
+
+  		var r2 = imagedata.data[idx+4];
+  		var g2 = imagedata.data[idx+5];
+      var b2 = imagedata.data[idx+6];
+      var color_index2 = getColorIndex( r2, g2, b2 );
+
+      var idx = color_index2 * 16 + color_index1;
+      imgdata.push( idx );
+    }
+  }
+
+  if( color_palette && imgdata ){
+    var data = [];
+
+    //. Title
+    for( var i = 0; i < title.length || i < 21; i ++ ){
+      if( i < 21 ){
+        if( i < title.length ){
+          var c = title.charCodeAt( i );
+          data.push( c );
+        }else{
+          data.push( 0 );
+        }
+        data.push( 0 );
+      }
+    }
+
+    //. *1, *2
+    data.push( 0 );
+    data.push( 0 );
+
+    //. Author
+    for( var i = 0; i < author.length || i < 9; i ++ ){
+      if( i < 9 ){
+        if( i < author.length ){
+          var c = author.charCodeAt( i );
+          data.push( c );
+        }else{
+          data.push( 0 );
+        }
+        data.push( 0 );
+      }
+    }
+
+    //. *12, *13, *3, *4
+    data.push( 0 );
+    data.push( 0 );
+    data.push( 0 );
+    data.push( 0 );
+
+    //. Town
+    for( var i = 0; i < town.length || i < 9; i ++ ){
+      if( i < 9 ){
+        if( i < town.length ){
+          var c = town.charCodeAt( i );
+          data.push( c );
+        }else{
+          data.push( 0 );
+        }
+        data.push( 0 );
+      }
+    }
+
+    //. *14, *15, *5, *6
+    data.push( 0 );
+    data.push( 0 );
+    data.push( 0 );
+    data.push( 0 );
+
+    //. Color Pallete
+    for( var i = 0; i < color_palette.length; i ++ ){
+      data.push( color_palette[i] );
+    }
+
+    //. *7, *8, *9, *10, *11
+    data.push( 0 );
+    data.push( 10 );
+    data.push( 9 );
+    data.push( 0 );
+    data.push( 0 );
+
+    //. Palette data
+    for( var i = 0; i < imgdata.length; i ++ ){
+      data.push( imgdata[i] );
+    }
+
+    /* モード１で作られてしまう
+    //. https://www.npmjs.com/package/qrcode#api
+    QRCode.toCanvas( document.getElementById( 'qrcode' ), data, function( err ){
+      if( err ){
+        console.log( err );
+      }else{
+        $('#qrcodeModal').modal();
+      }
+    });
+    */
+
+    //. 結果を blob で受け取るため、XMLHttpRequest で送信
+    //. https://qiita.com/Yarimizu14/items/f56123c738f12ad1844a
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function(){
+      if( this.readyState == 4 && this.status == 200 ){
+        var data = this.response;
+        var reader = new FileReader();
+        reader.onloadend = function(){
+          var qrcode_img = document.getElementById( 'qrcode_img' );
+          qrcode_img.src = reader.result;
+          $('#qrcodeModal').modal();
+        }
+        reader.readAsDataURL( data );
+      }
+    }
+    xhr.open( 'POST', '/qrcode' );
+    xhr.responseType = 'blob';
+    xhr.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded' );
+    xhr.send( 'data=' + data );
+  }
+}
+
+function getColorIndex( rr, gg, bb ){
+  var idx = 0;
+
+  /* この中のどの色に近いか、を調べて、インデックスを返す
+  //. カラーパレット
+  var color_palette = [
+    149,  //. transparent #cccccc
+    159,  //. black       #000000
+    145,  //. white       #ffffff
+    5,    //. red         #ff0000
+    86,   //. blue        #0000ff
+    95,   //. green       #00ff00
+    68,   //. yellow      #ffff00
+    122,  //. cyan        #00ffff
+    41,   //. magenta     #ff00ff
+    153,  //. gray        #808080
+    47,   //. pink        #ef8f9c
+    30,   //. beige       #ead2ad
+    59,   //. brown       #7c6035
+    111,  //. dummy
+    112   //. dummy
+  ];
+  */
+  /*
+  		if( rr && gg && bb ){
+  			col_type = 7;
+  		}else if( !rr && gg && bb ){
+  			col_type = 3;
+  		}else if( rr && !gg && bb ){
+  			col_type = 5;
+  		}else if( rr && gg && !bb ){
+  			col_type = 6;
+  		}else if( !rr && !gg && bb ){
+  			col_type = 1;
+  		}else if( !rr && gg && !bb ){
+  			col_type = 2;
+  		}else if( rr && !gg && !bb ){
+  			col_type = 4;
+  		}else if( !rr && !gg && !bb ){
+  			col_type = 0;
+      }
+      */
+  idx = Math.floor( Math.random() * 13 );
+  return idx;
 }
 </script>
 </body>

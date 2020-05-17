@@ -30,6 +30,7 @@
 	"common.deleteimage.confirm1": "You are about to delete image with id = ",
 	"common.deleteimage.confirm2": " . OK?",
 	"common.wanttotry": "Try!",
+	"common.migrate.button.siritori": "Siritori",
 	"common.migrate.button.from": "Transport",
 	"common.migrate.button.to": "Migrate",
 	"common.migrate.from.confirm": "This operation transport your data to anohter browser. You would NOT be able to see your data in this browser. Are you really going to proceed ?",

@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8"/>
 <title><%= __('common.header.title') %></title>
+<!-- #6
+<script src="//cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+-->
 <script type="text/javascript" src="//code.jquery.com/jquery-2.2.4.min.js"></script>
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"/>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
@@ -125,6 +128,7 @@ html, body{
         </table>
       </div>
       <div class="modal-footer btn-center">
+        <button type="button" class="btn btn-danger btn-xs" onClick="generateSiritori();"><%= __('common.migrate.button.siritori') %></button>
         <button type="button" class="btn btn-info btn-xs" onClick="migrateFrom();"><%= __('common.migrate.button.from') %></button>
         <button type="button" class="btn btn-success btn-xs" onClick="migrateTo();"><%= __('common.migrate.button.to') %></button>
       </div>
@@ -177,6 +181,7 @@ function init(){
             var ts = parseInt( image.timestamp );
             var dt = timestamp2datetime( ts );
             var tr = '<tr>'
+              + '<td><input name="history_body_check" type="checkbox" value="' + image._id + ':' + kanaToHira( image.title ) + '"/></td>'
               + '<td><a target="_blank" href="/doodle/' + image._id + '"><img src="/attachment/' + image._id + '" width="40%"/></a></td>'
               + '<td><a target="_blank" href="/doodle/' + image._id + '">' + image.title + '</a></td>'
               + '<td><a target="_blank" href="/doodle/' + image._id + '">' + dt + '</a></td>'
@@ -681,6 +686,65 @@ function migrateTo(){
   }
 }
 
+function generateSiritori(){
+  var ids = [];
+  var titles = [];
+  $('input:checkbox[name="history_body_check"]:checked').each( function(){
+    var tmp = $(this).val().split( ':' );
+    if( tmp.length == 2 ){
+      ids.push( tmp[0] );
+      titles.push( tmp[1] );
+    }
+  });
+  console.log( ids, titles );
+
+  //. titles がしりとりになるように ids を並べ替える
+  //. - カタカナはひらがなに変換する
+  //. - 漢字は漢字のまま
+  //. - 「不可能」という可能性もある
+
+  //. (1) 各語ごとに前にくる可能性のある候補がいくつあるか？
+  var prev_0 = 0;
+  var prevs = [];
+  for( var i = 0; i < titles.length; i ++ ){
+    var cnt = 0;
+    for( var j = 0; j < titles.length; j ++ ){
+      if( i != j && titles[i].charAt( 0 ) == titles[j].charAt( titles[j].length - 1 ) ){
+        cnt ++;
+      }
+    }
+    if( cnt == 0 ){
+      prev_0 ++;
+    }
+    prevs.push( cnt );
+  }
+
+  if( prev_0 > 1 ){
+    //. 不可能
+  }else{
+    //. (2) 各語ごとに後ろに続く候補がいくつあるか？
+    var next_0 = 0;
+    var nexts = [];
+    for( var i = 0; i < titles.length; i ++ ){
+      var cnt = 0;
+      for( var j = 0; j < titles.length; j ++ ){
+        if( i != j && titles[i].charAt( titles[i].length - 1 ) == titles[j].charAt( 0 ) ){
+          cnt ++;
+        }
+      }
+      if( cnt == 0 ){
+        next_0 ++;
+      }
+      nexts.push( cnt );
+    }
+
+    if( next_0 > 1 ){
+      //. 不可能
+    }else{
+    }
+  }
+}
+
 
 function generateUUID(){
   //. Cookie の値を調べて、有効ならその値で、空だった場合は生成する
@@ -718,6 +782,13 @@ function timestamp2datetime( ts ){
   }else{
     return "";
   }
+}
+
+function kanaToHira( kana ) {
+  return kana.replace(/[\u30a1-\u30f6]/g, function(match) {
+    var chr = match.charCodeAt(0) - 0x60;
+    return String.fromCharCode(chr);
+  });
 }
 </script>
 </body>
