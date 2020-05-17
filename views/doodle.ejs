@@ -45,7 +45,7 @@ html, body{
   color: #333;
 }
 .hide{
-  display: none;
+  //display: none;
 }
 </style>
 </head>
@@ -83,11 +83,9 @@ html, body{
 
       	  <li class="nav-item">
             <!-- QRCode -->
-            <!--
             <a class="nav-link" id="share_qrcode" title="" href="#">
               <button class="btn btn-secondary btn-xs py-0" onClick="qrCode('<%= doodle._id %>');"><i class="fas fa-qrcode"></i></button>
             </a>
-            -->
           </li>
         </ul>
     </div>
@@ -210,7 +208,16 @@ function qrCode( id ){
   var ctx = canvas.getContext( '2d' );
 
   //. タイトル
-  var title = 'My Work'; //'<%= doodle.title %>';
+  //var title = 'My Work'; //'<%= doodle.title %>';
+  var dt = new Date( <%= doodle.timestamp %> );
+  var yyyy = dt.getFullYear();
+  var mm = dt.getMonth() + 1;
+  var dd = dt.getDate();
+  var hh = dt.getHours();
+  var nn = dt.getMinutes();
+  var ss = dt.getSeconds();
+  var title = yyyy + ( mm < 10 ? '0' : '' ) + mm + ( dd < 10 ? '0' : '' ) + dd
+    + ' ' + ( hh < 10 ? '0' : '' ) + hh + ( nn < 10 ? '0' : '' ) + nn + ( ss < 10 ? '0' : '' ) + ss;
 
   //. 作者
   var author = 'My Doodles';
@@ -218,9 +225,9 @@ function qrCode( id ){
   //. Town
   var town = 'My Town';
 
-  //. カラーパレット
+  //. カラーパレット（この番号が間違ってる？）
   var color_palette = [
-    149,  //. transparent #cccccc
+    146,  //. transparent #eeeeee(#cccccc)
     159,  //. black       #000000
     145,  //. white       #ffffff
     5,    //. red         #ff0000
@@ -368,48 +375,60 @@ function qrCode( id ){
 }
 
 function getColorIndex( rr, gg, bb ){
-  var idx = 0;
+  var idx = -1;  //. 0-12 ただし背景色は 15 ？
 
-  /* この中のどの色に近いか、を調べて、インデックスを返す
-  //. カラーパレット
-  var color_palette = [
-    149,  //. transparent #cccccc
-    159,  //. black       #000000
-    145,  //. white       #ffffff
-    5,    //. red         #ff0000
-    86,   //. blue        #0000ff
-    95,   //. green       #00ff00
-    68,   //. yellow      #ffff00
-    122,  //. cyan        #00ffff
-    41,   //. magenta     #ff00ff
-    153,  //. gray        #808080
-    47,   //. pink        #ef8f9c
-    30,   //. beige       #ead2ad
-    59,   //. brown       #7c6035
-    111,  //. dummy
-    112   //. dummy
-  ];
-  */
-  /*
-  		if( rr && gg && bb ){
-  			col_type = 7;
-  		}else if( !rr && gg && bb ){
-  			col_type = 3;
-  		}else if( rr && !gg && bb ){
-  			col_type = 5;
-  		}else if( rr && gg && !bb ){
-  			col_type = 6;
-  		}else if( !rr && !gg && bb ){
-  			col_type = 1;
-  		}else if( !rr && gg && !bb ){
-  			col_type = 2;
-  		}else if( rr && !gg && !bb ){
-  			col_type = 4;
-  		}else if( !rr && !gg && !bb ){
-  			col_type = 0;
+  //if( rr == 0 && gg == 0 & bb == 0 ){
+  //  idx = 15;
+  //}else{
+    /* この 13 色中のどの色に近いか、を調べて、インデックスを返す
+    //. カラーパレット
+    var color_palette = [  //rrggbb
+      146,  //. transparent #eeeeee
+      159,  //. black       #000000
+      145,  //. white       #ffffff
+      5,    //. red         #ff0000
+      86,   //. blue        #0000ff
+      95,   //. green       #00ff00
+      68,   //. yellow      #ffff00
+      122,  //. cyan        #00ffff
+      41,   //. magenta     #ff00ff
+      153,  //. gray        #808080
+      47,   //. pink        #ef8f9c
+      30,   //. beige       #ead2ad
+      59,   //. brown       #7c6035
+      111,  //. dummy
+      112   //. dummy
+    ];
+    */
+    var colors = [
+      { rr: 0xee, gg: 0xee, bb: 0xee },
+      { rr: 0x00, gg: 0x00, bb: 0x00 },
+      { rr: 0xff, gg: 0xff, bb: 0xff },
+      { rr: 0xff, gg: 0x00, bb: 0x00 },
+      { rr: 0x00, gg: 0x00, bb: 0xff },
+      { rr: 0x00, gg: 0xff, bb: 0x00 },
+      { rr: 0xff, gg: 0xff, bb: 0x00 },
+      { rr: 0x00, gg: 0xff, bb: 0xff },
+      { rr: 0xff, gg: 0x00, bb: 0xff },
+      { rr: 0x80, gg: 0x80, bb: 0x80 },
+      { rr: 0xef, gg: 0x8f, bb: 0x9c },
+      { rr: 0xea, gg: 0xd2, bb: 0xad },
+      { rr: 0x7c, gg: 0x60, bb: 0x35 }
+    ];
+
+    //. ３次元ユークリッド距離で比較
+    var mx = 255 * 255 * 3;
+    for( var i = 0; i < colors.length; i ++ ){
+      var d = ( colors[i].rr - rr ) * ( colors[i].rr - rr )
+        + ( colors[i].gg - gg ) * ( colors[i].gg - gg )
+        + ( colors[i].bb - bb ) * ( colors[i].bb - bb );
+      if( d < mx ){
+        idx = i;
+        mx = d;
       }
-      */
-  idx = Math.floor( Math.random() * 13 );
+    }
+  //}
+
   return idx;
 }
 </script>
