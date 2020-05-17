@@ -128,9 +128,11 @@ html, body{
         </table>
       </div>
       <div class="modal-footer btn-center">
-        <button type="button" class="btn btn-danger btn-xs" onClick="generateSiritori();"><%= __('common.migrate.button.siritori') %></button>
-        <button type="button" class="btn btn-info btn-xs" onClick="migrateFrom();"><%= __('common.migrate.button.from') %></button>
-        <button type="button" class="btn btn-success btn-xs" onClick="migrateTo();"><%= __('common.migrate.button.to') %></button>
+        <!--
+        <button type="button" class="btn btn-danger btn-xs py-0" onClick="generateSiritori();"><%= __('common.migrate.button.siritori') %></button>
+        -->
+        <button type="button" class="btn btn-info btn-xs py-0" onClick="migrateFrom();"><i class="fas fa-file-export"></i></button>
+        <button type="button" class="btn btn-success btn-xs py-0" onClick="migrateTo();"><i class="fas fa-file-import"></i></button>
       </div>
     </div>
   </div>
@@ -761,8 +763,21 @@ function generateUUID(){
     var s = 1000;
     did = ( new Date().getTime().toString(16) ) + Math.floor( s * Math.random() ).toString(16);
   }
+
+  // https://qiita.com/yossaito/items/6ffb1b8bb3f9d91107b8
   var maxage = 60 * 60 * 24 * 365 * 100; //. 100years
-  document.cookie = ( "deviceid=" + did + '; max-age=' + maxage );
+  //var maxage = 60 * 60 * 24 * 7; //. 7 days(less than 8 days https://qiita.com/yossaito/items/6ffb1b8bb3f9d91107b8)
+  //document.cookie = ( "deviceid=" + did + '; max-age=' + maxage );
+  var value = ( "deviceid=" + did + '; max-age=' + maxage );
+  $.ajax({
+    url: '/setcookie',
+    type: 'POST',
+    data: { value: value },
+    success: function( r ){
+    },
+    error: function( e0, e1, e2 ){
+    }
+  });
 
   return did;
 }

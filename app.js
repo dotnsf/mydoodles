@@ -482,6 +482,17 @@ app.post( '/migrate_to', function( req, res ){
   }
 });
 
+//. #9
+app.post( '/setcookie', function( req, res ){
+  res.contentType( 'application/json; charset=utf-8' );
+
+  var value = req.body.value;
+  res.setHeader( 'Set-Cookie', value );
+
+  res.write( JSON.stringify( { status: true }, 2, null ) );
+  res.end();
+});
+
 
 function insertQueryIndex(){
   if( db ){
