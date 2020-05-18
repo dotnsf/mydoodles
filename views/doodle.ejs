@@ -50,14 +50,7 @@ html, body{
 </style>
 </head>
 <body>
-  <!-- //navi -->
-  <nav class="navbar navbar-expand-lg">
-    <div class="navbar-header">
-      <a class="btn btn-primary" href="/"><%= __('common.wanttotry') %></a>
-    </div>
-  </nav>
-  <!-- navi// -->
-
+  <!-- //action buttons -->
   <div style="text-align: right">
         <ul class="nav navbar-nav">   
       	  <li class="nav-item" id="share_buttons">
@@ -80,6 +73,15 @@ html, body{
           </li>
         </ul>
   </div>
+  <!-- action buttons// -->
+
+  <!-- //navi -->
+  <nav class="navbar navbar-expand-lg">
+    <div class="navbar-header">
+      <a class="btn btn-primary" href="/"><%= __('common.wanttotry') %></a>
+    </div>
+  </nav>
+  <!-- navi// -->
 
 
 <div class="container" id="dummy" style="position: relative; top: 20px; text-align: right">
@@ -177,7 +179,8 @@ function getUUID(){
   cookies = document.cookie.split(";");
   for( var i = 0; i < cookies.length; i ++ ){
     var str = cookies[i].split("=");
-    if( unescape( str[0] ) == "deviceid" ){
+    var une = unescape( str[0] );
+    if( une == " deviceid" || une == "deviceid" ){
       did = unescape( unescape( str[1] ) );
     }
   }
@@ -187,7 +190,6 @@ function getUUID(){
 
 function qrCode( id ){
   //console.log( 'qrCode: id = ' + id );
-
   var canvas = document.getElementById( 'canvas' );
   if( !canvas || !canvas.getContext ){
     return false;
