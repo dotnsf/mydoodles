@@ -52,26 +52,26 @@ html, body{
 <body>
   <!-- //action buttons -->
   <div style="text-align: right">
-        <ul class="nav navbar-nav">   
-      	  <li class="nav-item" id="share_buttons">
-            <!-- twitter -->
-            <a class="navlink" id="share_twitter" title="<%= __('common.doodle.share_twitter.title') %>" href="https://twitter.com/share?url=https://mydoodles.mybluemix.net/doodle/<%= id %>&text=%20<%= doodle.title %>&hashtags=mydoodles" target="_blank">
-              <img src="/share_twitter.png"/>
-            </a>
-            <!-- facebook -->
-            <a class="navlink" id="share_facebook" title="<%= __('common.doodle.share_facebook.title') %>" href="https://www.facebook.com/share.php?u=https://mydoodles.mybluemix.net/doodle/<%= id %>" onclick="window.open(this.href, 'FBwindow', 'width=650,height=450,menubar=no,toolbar=no,scrollbars=yes'); return false;">
-              <img src="/share_facebook.png"/>
-            </a>
-            <!-- line -->
-            <a class="navlink" id="share_line" title="<%= __('common.doodle.share_line.title') %>" href="https://social-plugins.line.me/lineit/share?url=https://mydoodles.mybluemix.net/doodle/<%= id %>" onclick="window.open(this.href, 'Linewindow', 'width=650,height=450,menubar=no,toolbar=no,scrollbars=yes'); return false;">
-              <img src="/share_line.png"/>
-            </a>
-            <!-- QRCode -->
-            <a class="navlink" id="share_qrcode" title="" href="#">
-              <button class="btn btn-secondary btn-xs py-0" onClick="qrCode('<%= doodle._id %>');"><i class="fas fa-qrcode"></i></button>
-            </a>
-          </li>
-        </ul>
+    <ul class="nav navbar-nav">   
+     <li class="nav-item" id="share_buttons">
+        <!-- twitter -->
+        <a class="navlink" id="share_twitter" title="<%= __('common.doodle.share_twitter.title') %>" href="https://twitter.com/share?url=https://mydoodles.mybluemix.net/doodle/<%= id %>&text=%20<%= doodle.title %>&hashtags=mydoodles" target="_blank">
+          <img src="/share_twitter.png"/>
+        </a>
+        <!-- facebook -->
+        <a class="navlink" id="share_facebook" title="<%= __('common.doodle.share_facebook.title') %>" href="https://www.facebook.com/share.php?u=https://mydoodles.mybluemix.net/doodle/<%= id %>" onclick="window.open(this.href, 'FBwindow', 'width=650,height=450,menubar=no,toolbar=no,scrollbars=yes'); return false;">
+          <img src="/share_facebook.png"/>
+        </a>
+        <!-- line -->
+        <a class="navlink" id="share_line" title="<%= __('common.doodle.share_line.title') %>" href="https://social-plugins.line.me/lineit/share?url=https://mydoodles.mybluemix.net/doodle/<%= id %>" onclick="window.open(this.href, 'Linewindow', 'width=650,height=450,menubar=no,toolbar=no,scrollbars=yes'); return false;">
+          <img src="/share_line.png"/>
+        </a>
+        <!-- QRCode -->
+        <a class="navlink" id="share_qrcode" title="" href="#">
+          <button class="btn btn-secondary btn-xs py-0" onClick="qrCode('<%= doodle._id %>');"><i class="fas fa-qrcode"></i></button>
+        </a>
+      </li>
+    </ul>
   </div>
   <!-- action buttons// -->
 
