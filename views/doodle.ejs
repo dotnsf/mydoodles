@@ -188,6 +188,19 @@ function getUUID(){
   return did;
 }
 
+function str2bytearray( str ){
+  var arr = [];
+  for( var i = 0; i < str.length; i ++ ){
+    var cc = str.charCodeAt( i );
+    var c1 = Math.floor( cc / 256 );
+    var c2 = cc % 256;
+    arr.push( c2 );
+    arr.push( c1 );
+  }
+
+  return arr;
+}
+
 function qrCode( id ){
   //console.log( 'qrCode: id = ' + id );
   var canvas = document.getElementById( 'canvas' );
@@ -198,6 +211,7 @@ function qrCode( id ){
 
   //. タイトル
   //var title = 'My Work'; //'<%= doodle.title %>';
+  /*
   var dt = new Date( <%= doodle.timestamp %> );
   var yyyy = dt.getFullYear();
   var mm = dt.getMonth() + 1;
@@ -207,14 +221,16 @@ function qrCode( id ){
   var ss = dt.getSeconds();
   var title = yyyy + ( mm < 10 ? '0' : '' ) + mm + ( dd < 10 ? '0' : '' ) + dd
     + ' ' + ( hh < 10 ? '0' : '' ) + hh + ( nn < 10 ? '0' : '' ) + nn + ( ss < 10 ? '0' : '' ) + ss;
+    */
+  var title = '<%= doodle.title %>';
 
   //. 作者
-  var author = 'My Doodles';
+  var author = 'MyDoodles';
 
   //. Town
   var town = 'My Town';
 
-  //. カラーパレット（この番号が間違ってる？）
+  //. カラーパレット
   var color_palette = [
     146,  //. transparent #eeeeee(#cccccc)
     159,  //. black       #000000
@@ -272,15 +288,15 @@ function qrCode( id ){
     var data = [];
 
     //. Title
-    for( var i = 0; i < title.length || i < 21; i ++ ){
-      if( i < 21 ){
-        if( i < title.length ){
-          var c = title.charCodeAt( i );
+    var titlearray = str2bytearray( title );
+    for( var i = 0; i < titlearray.length || i < 42; i ++ ){
+      if( i < 42 ){
+        if( i < titlearray.length ){
+          var c = titlearray[i];
           data.push( c );
         }else{
           data.push( 0 );
         }
-        data.push( 0 );
       }
     }
 

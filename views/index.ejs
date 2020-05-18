@@ -756,7 +756,6 @@ function generateUUID(){
   //. Cookie の値を調べて、有効ならその値で、空だった場合は生成する
   var did = null;
   cookies = document.cookie.split(";");
-  console.log( cookies );
   for( var i = 0; i < cookies.length; i ++ ){
     var str = cookies[i].split("=");
     var une = unescape( str[0] );
