@@ -781,22 +781,21 @@ function generateUUID(){
   ts += 1000 * 60 * 60 * 24 * 365 * 100; //. 100 years
   dt.setTime( ts );
   var value = ( "deviceid=" + did + '; expires=' + dt.toUTCString() + '; path=/' );
-  console.log( 'value = ' + value );
   if( isMobileSafari() ){
     $.ajax({
       url: '/setcookie',
       type: 'POST',
       data: { value: value },
       success: function( r ){
-        console.log( 'success: ', r );
+        //console.log( 'success: ', r );
       },
       error: function( e0, e1, e2 ){
-        console.log( 'error: ', e1, e2 );
+        //console.log( 'error: ', e1, e2 );
       }
     });
   }else{
     document.cookie = ( value );
-    console.log( 'value: ', value );
+    //console.log( 'value: ', value );
   }
 
   return did;
