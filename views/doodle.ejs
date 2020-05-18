@@ -272,12 +272,14 @@ function qrCode( id ){
   		var r1 = imagedata.data[idx];
   		var g1 = imagedata.data[idx+1];
       var b1 = imagedata.data[idx+2];
-      var color_index1 = getColorIndex( r1, g1, b1 );
+      var a1 = imagedata.data[idx+3];
+      var color_index1 = getColorIndex( r1, g1, b1, a1 );
 
   		var r2 = imagedata.data[idx+4];
   		var g2 = imagedata.data[idx+5];
       var b2 = imagedata.data[idx+6];
-      var color_index2 = getColorIndex( r2, g2, b2 );
+      var a2 = imagedata.data[idx+7];
+      var color_index2 = getColorIndex( r2, g2, b2, a2 );
 
       var idx = color_index2 * 16 + color_index1;
       imgdata.push( idx );
@@ -392,12 +394,17 @@ function qrCode( id ){
   }
 }
 
-function getColorIndex( rr, gg, bb ){
+function getColorIndex( rr, gg, bb, aa ){
   var idx = -1;  //. 0-12 ただし背景色は 15 ？
 
   if( rr == 0 && gg == 0 & bb == 0 ){
-    //idx = 15;
-    idx = 0;     //. 15 にするとおかしくなってしまうので 0 とする
+    //. #11
+    //. 黒だとしたら 1, 背景色だったら 15 または 0 にするべき
+    if( aa == 0 ){
+      idx = 0;     //. 15 にするとおかしくなってしまうので 0 とする
+    }else{
+      idx = 1;
+    }
   }else{
     /* この 13 色中のどの色に近いか、を調べて、インデックスを返す
     //. カラーパレット
