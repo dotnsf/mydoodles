@@ -303,8 +303,8 @@ function qrCode( id ){
     }
 
     //. *1, *2
-    data.push( 0 );
-    data.push( 0 );
+    data.push( 23 );
+    data.push( 146 );
 
     //. Author
     for( var i = 0; i < author.length || i < 9; i ++ ){
@@ -320,10 +320,10 @@ function qrCode( id ){
     }
 
     //. *12, *13, *3, *4
+    data.push( 1 );
     data.push( 0 );
-    data.push( 0 );
-    data.push( 0 );
-    data.push( 0 );
+    data.push( 216 );
+    data.push( 144 );
 
     //. Town
     for( var i = 0; i < town.length || i < 9; i ++ ){
@@ -341,8 +341,8 @@ function qrCode( id ){
     //. *14, *15, *5, *6
     data.push( 0 );
     data.push( 0 );
-    data.push( 0 );
-    data.push( 0 );
+    data.push( 1 );
+    data.push( 2 );
 
     //. Color Pallete
     for( var i = 0; i < color_palette.length; i ++ ){
@@ -350,8 +350,8 @@ function qrCode( id ){
     }
 
     //. *7, *8, *9, *10, *11
+    data.push( 198 );
     data.push( 0 );
-    data.push( 10 );
     data.push( 9 );
     data.push( 0 );
     data.push( 0 );
