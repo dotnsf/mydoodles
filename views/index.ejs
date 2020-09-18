@@ -184,9 +184,9 @@ function init(){
             var dt = timestamp2datetime( ts );
             var tr = '<tr>'
               + '<td><input name="history_body_check" type="checkbox" value="' + image._id + ':' + kanaToHira( image.title ) + '"/></td>'
-              + '<td><a target="_blank" href="/doodle/' + image._id + '"><img src="/attachment/' + image._id + '" width="40%"/></a></td>'
-              + '<td><a target="_blank" href="/doodle/' + image._id + '">' + image.title + '</a></td>'
-              + '<td><a target="_blank" href="/doodle/' + image._id + '">' + dt + '</a></td>'
+              + '<td><a href="/doodle/' + image._id + '"><img src="/attachment/' + image._id + '" width="40%"/></a></td>'
+              + '<td><a href="/doodle/' + image._id + '">' + image.title + '</a></td>'
+              + '<td><a href="/doodle/' + image._id + '">' + dt + '</a></td>'
               + '<td><button class="btn btn-xs btn-danger" onClick="deleteImage(\'' + image._id + '\');">' + "<%= __('common.deleteimage.button') %>" + '</button></td>'
               + '</tr>';
             $('#history_body').append( tr );
@@ -440,6 +440,11 @@ function init(){
   //. リサイズ時に Canvas サイズを変更する
   $(window).on( 'load resize', function(){
     resized();
+  });
+
+  //. ダブルクリック時の拡大を抑制 -> 効果なし？
+  canvas.on( 'dblclick', function( event ){
+    event.preventDefault();
   });
 
   //. スクロール禁止
