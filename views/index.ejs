@@ -122,10 +122,8 @@ html, body{
         </button>
       </div>
       <div class="modal-body" id="historymodal-body">
-        <table class="table table-bordered">
-          <tbody id="history_body">
-          </tbody>
-        </table>
+        <select id="history_select">
+        </select>
       </div>
       <div class="modal-footer btn-center">
         <!--
@@ -172,24 +170,26 @@ $(function(){
 
 function init(){
   if( uuid ){
-    $('#history_body').html( '' );
+    $('#history_select').html( '' );
     $.ajax({
       url: './search/' + uuid,
       type: 'GET',
       success: function( result ){
+        $('#history_select').html( '<option value="">' + "<%= __('common.history.select') %>" + '</option>' );
         if( result && result.status && result.images ){
           result.images.forEach( function( image ){
             //console.log( image );
             var ts = parseInt( image.timestamp );
             var dt = timestamp2datetime( ts );
-            var tr = '<tr>'
-              + '<td><input name="history_body_check" type="checkbox" value="' + image._id + ':' + kanaToHira( image.title ) + '"/></td>'
-              + '<td><a href="/doodle/' + image._id + '"><img src="/attachment/' + image._id + '" width="40%"/></a></td>'
-              + '<td><a href="/doodle/' + image._id + '">' + image.title + '</a></td>'
-              + '<td><a href="/doodle/' + image._id + '">' + dt + '</a></td>'
-              + '<td><button class="btn btn-xs btn-danger" onClick="deleteImage(\'' + image._id + '\');">' + "<%= __('common.deleteimage.button') %>" + '</button></td>'
-              + '</tr>';
-            $('#history_body').append( tr );
+            var o = '<option value="' + image._id + '">' + (dt.split(' '))[0] + ' ' + image.title + '</option>';
+            $('#history_select').append( o );
+          });
+
+          $('#history_select').change( function(){
+            var v = $('#history_select').val();
+            if( v ){
+              window.location.href = '/doodle/' + v;
+            }
           });
         }
       },
