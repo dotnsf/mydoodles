@@ -11,6 +11,9 @@
 <link href="//use.fontawesome.com/releases/v5.8.1/css/all.css" rel="stylesheet"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 
+<link href="/colorbox.css" rel="stylesheet"/>
+<script src="/jquery.colorbox-min.js"></script>
+
 <link rel="shortcut icon" href="/icon.png" type="image/png"/>
 <link rel="icon" href="/icon.png" type="image/png"/>
 <link rel="apple-touch-icon" href="/icon.png"/>
@@ -46,43 +49,94 @@ html, body{
   font-size: 20px;
   color: #333;
 }
+th{
+  text-align: center;
+}
+.w_0{
+  background-color: #fcc;
+}
+.w_6{
+  background-color: #ccf;
+}
 </style>
 </head>
 <body>
+
+<div class="container">
+  <table class="table">
+    <tr>
+      <td><a href="#" onClick="prevMonth()">&lt;&lt;</a></td>
+      <td>
+        <h2><span id="title_y"></span> / <span id="title_m"></span></h2>
+      </td>
+      <td><a href="#" onClick="nextMonth()">&gt;&gt;</a></td>
+    </tr>
+  </table>
+</div>
+
 <div class="container">
   <table class="table table-bordered" id="view_table">
     <thead>
-      <tr><th>#</th><th>uuid</th></th><th>title</th><th>datetime</th><th>actions</th></tr>
+      <tr><th class="w_0">Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th class="w_6">Sat</th></tr>
     </thead>
-    <tbody>
-<% for ( var i = 0; i < images.length; i ++ ){ %>
-      <tr>
-        <td><a target="_blank" href="/doodle/<%= images[i]._id %>"><img src="/attachment/<%= images[i]._id %>" width="40%"/></a></td>
-        <td><a target="_blank" href="/doodle/<%= images[i]._id %>"><%= images[i].uuid %></a></td>
-        <td><a target="_blank" href="/doodle/<%= images[i]._id %>"><%= images[i].title %></a></td>
-        <td><a target="_blank" href="/doodle/<%= images[i]._id %>"><%= images[i].datetime %></a></td>
-        <td><button class="btn btn-xs btn-danger" onClick="deleteImage('<%= images[i]._id %>');"><%= __('common.deleteimage.button') %></button></td>
-      </tr>
-<% } %>
+    <tbody id="view_table_body">
     </tbody>
   </table>
 </div>
 
+<div style="display:none;">
+  <div id="box_content">
+  </div>
+</div>
+
 <script>
+var y = <%= y %>; 
+var m = <%= m %>; 
+var uid = '<%= id %>';
 $(function(){
-  $.extend( $.fn.dataTable.defaults, {
-    language: {
-      url: '//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Japanese.json'
+  if( y && m ){
+    $('#title_y').html( y );
+    $('#title_m').html( m );
+
+    //. 該当月が何日まであるか
+    var days = getDaysOfMonth( y, m );
+    //. 該当月の１日の曜日を求める
+    var dt = new Date( y, m - 1, 1 );
+    var day = dt.getDay(); //. 0:Sun, 1:Mon, ..
+    var tr = '<tr>';
+    var ids = [];
+    for( var i = 0; i < day; i ++ ){
+      tr += '<td class="w_' + i + '">&nbsp;</td>';
     }
-  });
-  $('#view_table').DataTable({
-    columnDefs: [{ 
-      targets: [ 0, 4 ], 
-      orderable: false,
-      searchable: false
-    }],
-    order: [ [ 3, 'desc' ] ]
-  });
+    for( var i = 1; i <= days; i ++ ){
+      tr += '<td class="w_' + ( ( day + i - 1 ) % 7 ) + '">' + i;
+<% for( var j = 0; j < images.length; j ++ ){ %>
+      if( i == <%= images[j].d %> ){
+        tr += '<br/><%= images[j].title %>';
+        tr += '<br/><a href="#box_content" id="box_content_<%= images[j]._id %>"><img src="/attachment/<%= images[j]._id %>" width="100"/></a>';
+        ids.push( '<%= images[j]._id %>' );
+      }
+<% } %>
+      tr += '</td>';
+      if( ( day + i ) % 7 == 0 ){
+        tr += '</tr>';
+        $('#view_table_body').append( tr );
+
+        ids.forEach( function( id ){
+			    $('#box_content_'+id).colorbox({ inline: true, transition: 'none', width: "90%", height: "90%", onOpen: function(){ zoomImage( id ); } });
+        });
+        ids = [];
+
+        tr = '<tr>';
+      }
+    }
+
+    tr += '</tr>';
+    $('#view_table_body').append( tr );
+    ids.forEach( function( id ){
+		  $('#box_content_'+id).colorbox({ inline: true, transition: 'none', width: "90%", height: "90%", onOpen: function(){ zoomImage( id ); } });
+    });
+  }
 });
 
 function deleteImage( id ){
@@ -115,6 +169,56 @@ function timestamp2datetime( ts ){
   }else{
     return "";
   }
+}
+
+function getDaysOfMonth( y, m ){
+  var ms = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
+  var r = ms[m-1];
+
+  if( isLeapYear( y ) && m == 2 ){
+    r = 29;
+  }
+
+  return r;
+}
+
+function isLeapYear( y ){
+  var b = false;
+  if( y % 4 == 0 ){
+    b = true;
+    if( y % 100 == 0 ){
+      b = true;
+      if( y % 400 == 0 ){
+        b = false;
+      }
+    }
+  }
+
+  return b;
+}
+
+function zoomImage( id ){
+  $('#box_content').html( '<img id="zoom_image" socket_id="' + id + '" src="/attachment/' + id + '"/>' );
+}
+
+function prevMonth(){
+  m --;
+  if( m < 1 ){
+    m = 12;
+    y --;
+  }
+
+  window.location.href = '/view?id=' + uid + '&y=' + y + '&m=' + m;
+}
+
+function nextMonth(){
+  m ++;
+  if( m > 12 ){
+    m = 1;
+    y ++
+  }
+
+  window.location.href = '/view?id=' + uid + '&y=' + y + '&m=' + m;
 }
 </script>
 </body>

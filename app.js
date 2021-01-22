@@ -45,7 +45,7 @@ if( settings.db_username && settings.db_password ){
   }
 }
 
-
+/*
 app.all( '/view', basicAuth( function( user, pass ){
   if( settings.admin_username && settings.admin_password ){
     return ( settings.admin_username === user && settings.admin_password === pass );
@@ -53,6 +53,7 @@ app.all( '/view', basicAuth( function( user, pass ){
     return false;
   }
 }));
+*/
 
 app.use( multer( { dest: './tmp/' } ).single( 'image' ) );
 app.use( bodyParser.urlencoded( { extended: true } ) );
@@ -143,27 +144,52 @@ app.post( '/qrcode', function( req, res ){
 
 app.get( '/view', function( req, res ){
   var images = [];
-  if( db ){
-    db.list( { include_docs: true }, function( err, body ){
+  var id = req.query.id;
+  if( db && id ){
+    db.find( { selector: { uuid: { "$eq": id } }, fields: [ "_id", "_rev", "filename", "type", "title", "timestamp", "uuid" ] }, function( err, result ){
       if( err ){
-        res.render( 'view', { images: images, error: err } );
+        res.render( 'view', { id: id, y: 0, m: 0, images: images, error: err } );
       }else{
-        var total = body.total_rows;
-        body.rows.forEach( function( doc ){
-          var _doc = JSON.parse(JSON.stringify(doc.doc));
-          if( _doc._id.indexOf( '_' ) !== 0 && _doc.type && _doc.type == 'image' ){
-            _doc.datetime = timestamp2datetime( parseInt( _doc.timestamp ) );
-            images.push( _doc );
+        //. 対象年＆月を特定
+        var dt = new Date();
+        var y = dt.getFullYear();
+        var m = dt.getMonth() + 1;
+        if( req.query.y ){
+          try{
+            y = parseInt( req.query.y );
+          }catch( e ){
+          }
+        }
+        if( req.query.m ){
+          try{
+            m = parseInt( req.query.m );
+          }catch( e ){
+          }
+        }
+
+        var total = result.docs.length;
+        var images = [];
+        result.docs.forEach( function( doc ){
+          if( doc._id.indexOf( '_' ) !== 0 && doc.type && doc.type == 'image' ){
+            dt.setTime( parseInt( doc.timestamp ) )
+            var y0 = dt.getFullYear();
+            var m0 = dt.getMonth() + 1;
+            var d = dt.getDate();
+            if( y == y0 && m == m0 ){
+              doc.y = y;
+              doc.m = m;
+              doc.d = d;
+              images.push( doc );
+            }
           }
         });
 
         images.sort( sortByTimestampRev );
-
-        res.render( 'view', { images: images } );
+        res.render( 'view', { id: id, y: y, m: m, images: images } );
       }
     });
   }else{
-    res.render( 'view', { images: images, error: 'db not ready.' } );
+    res.render( 'view', { id: id, y: 0, m: 0, images: images, error: 'db and/or id not found.' } );
   }
 });
 
