@@ -154,6 +154,7 @@ app.get( '/view', function( req, res ){
         var dt = new Date();
         var y = dt.getFullYear();
         var m = dt.getMonth() + 1;
+        var offset = ( dt.getTimezoneOffset() + 540 ) * 60 * 1000;
         if( req.query.y ){
           try{
             y = parseInt( req.query.y );
@@ -171,7 +172,10 @@ app.get( '/view', function( req, res ){
         var images = [];
         result.docs.forEach( function( doc ){
           if( doc._id.indexOf( '_' ) !== 0 && doc.type && doc.type == 'image' ){
-            dt.setTime( parseInt( doc.timestamp ) )
+            //. このままだと us-south タイムゾーンで日付計算されるので日本時間のカレンダーに合わなくなるのでオフセットを処理する
+            //dt.setTime( parseInt( doc.timestamp ) )
+            dt.setTime( parseInt( doc.timestamp ) + offset )
+
             var y0 = dt.getFullYear();
             var m0 = dt.getMonth() + 1;
             var d = dt.getDate();
