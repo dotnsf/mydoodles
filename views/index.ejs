@@ -122,6 +122,7 @@ html, body{
         </button>
       </div>
       <div class="modal-body" id="historymodal-body">
+        <a id="calenderview" href="#"><%= __('common.calender') %></a><br/>or<br/>
         <select id="history_select">
         </select>
       </div>
@@ -143,6 +144,7 @@ html, body{
 <script>
 var uuid = generateUUID();
 console.log( 'uuid = ' + uuid );
+$('#calenderview').prop( 'href', '/view?id=' + uuid );
 $('#historyModalLabel').html( '<%= __('common.history') %> : ' + uuid );
 var o_id = null;
 var o_rev = null;
