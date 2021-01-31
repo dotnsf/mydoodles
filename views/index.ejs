@@ -62,7 +62,10 @@ html, body{
     <tr><td>
       <input type="text" class="form-control" id="title" name="title" placeholder="<%= __('common.title') %>"/>
     </td><td>
+      <!--
       <a href="#" class="btn btn-xs btn-info" data-toggle="modal" data-target="#historyModal" id="history_btn"><%= __('common.history') %></a>
+      -->
+      <a href="#" class="btn btn-xs btn-info" id="history_btn"><%= __('common.history') %></a>
     </td></tr>
   </table>
 </div>
@@ -160,8 +163,10 @@ html, body{
         <!--
         <button type="button" class="btn btn-danger btn-xs py-0" onClick="generateSiritori();"><%= __('common.migrate.button.siritori') %></button>
         -->
+        <!--
         <button type="button" class="btn btn-info btn-xs py-0" onClick="migrateFrom();"><i class="fas fa-file-export"></i></button>
         <button type="button" class="btn btn-success btn-xs py-0" onClick="migrateTo();"><i class="fas fa-file-import"></i></button>
+        -->
       </div>
     </div>
   </div>
@@ -175,6 +180,7 @@ html, body{
 var uuid = generateUUID();
 console.log( 'uuid = ' + uuid );
 $('#calenderview').prop( 'href', '/view?id=' + uuid );
+$('#history_btn').prop( 'href', '/view?id=' + uuid );
 $('#historyModalLabel').html( '<%= __('common.history') %> : ' + uuid );
 var o_id = null;
 var o_rev = null;
