@@ -22,6 +22,8 @@
 	"common.button.post": "送信",
 	"common.comment": "コメント",
 	"common.history": "履歴",
+	"common.edit": "編集",
+	"common.datetime": "日時",
 	"common.calender": "カレンダービュー",
     "common.history.select": "（１つ選択）",
 	"common.doodle.share_twitter.title": "このページを Twitter でシェア",

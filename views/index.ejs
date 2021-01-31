@@ -103,6 +103,8 @@ html, body{
 
 <input type="button" class="btn btn-xs btn-secondary p-0" id="setbg_btn" value="<%= __('common.button.background') %>" onClick="setBG();"/>
 
+<a href="#" class="btn btn-xs btn-secondary btn-xs py-0" data-toggle="modal" data-target="#editModal" id="history_btn"><i class="fas fa-edit"></i></a>
+
 <div id="canvas_div">
   <div id="cdiv"></div>
 
@@ -110,6 +112,34 @@ html, body{
   <input type="button" class="btn btn-xs btn-warning" value="<%= __('common.button.reset') %>" onClick="resetCanvas();"/>
   <input type="button" class="btn btn-xs btn-primary" id="save_btn" value="<%= __('common.button.save') %>" onClick="save();"/>
   <input type="button" class="btn btn-xs" id="redo_btn" value=">" onClick="redo();" disabled="disabled"/>
+</div>
+
+<div class="modal bd-example-modal-lg fade" id="editModal" tabindex="-1" role="dialog" aria-labbelledby="editModal" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="editModalLabel"><%= __('common.edit') %></h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="editmodal-body">
+        <%= __('common.datetime') %> : <input type="datetime" id="timestamp" value=""/>
+      </div>
+      <div class="modal-footer btn-center">
+        <!--
+        <button type="button" class="btn btn-danger btn-xs py-0" onClick="generateSiritori();"><%= __('common.migrate.button.siritori') %></button>
+        <button type="button" class="btn btn-info btn-xs py-0" onClick="migrateFrom();"><i class="fas fa-file-export"></i></button>
+        <button type="button" class="btn btn-success btn-xs py-0" onClick="migrateTo();"><i class="fas fa-file-import"></i></button>
+        -->
+<% if( doodle && doodle._id ){ %>
+        <!-- #15 -->
+        <button type="button" class="btn btn-danger btn-xs py-0" onClick="deleteImage('<%= doodle._id %>');"><i class="fas fa-trash"></i></button>
+<% } %>
+        <button type="button" class="btn" data-toggle="modal" onClick="editModalClose();">OK</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="modal bd-example-modal-lg fade" id="historyModal" tabindex="-1" role="dialog" aria-labbelledby="historyModal" aria-hidden="true">
@@ -205,6 +235,9 @@ function init(){
       $('#title').val( '<%= doodle.title %>' );
       o_id = '<%= doodle._id %>';
       o_rev = '<%= doodle._rev %>';
+
+      //. #16
+      $('#timestamp').val( timestamp2datetime2('<%= doodle.timestamp %>') );
     }
 <% } %>
   }
@@ -510,6 +543,17 @@ function save(){
   var title = $('#title').val();
   if( !title ){ title = ''; }
 
+  //. 日時 #16
+  var timestamp = $('#timestamp').val();
+  if( !timestamp ){ 
+    timestamp = ( new Date() ).getTime(); 
+  }else{
+    //. timestamp の形式は？
+    //. タイムスタンプ出ない場合はタイムスタンプに変換する
+    var tmp = new Date( timestamp );
+    timestamp = tmp.getTime();
+  }
+
   //. 画像データ
   var png = canvas.toDataURL( 'image/png' );
   png = png.replace( /^.*,/, '' );
@@ -528,7 +572,7 @@ function save(){
   console.log( 'Sending data... : ' + blob.size );
   var formData = new FormData();
   formData.append( 'image', blob );    //. <form enctype='multipart/formdata'><input name='image' type='file'/> ...
-  formData.append( 'timestamp', ( new Date() ).getTime() );
+  formData.append( 'timestamp', timestamp );
   formData.append( 'title', title );
   formData.append( 'uuid', uuid );
   if( o_id && o_rev ){
@@ -826,11 +870,39 @@ function timestamp2datetime( ts ){
   }
 }
 
+function timestamp2datetime2( ts ){
+  console.log( 'ts', ts );
+  if( ts ){
+    var dt = new Date();
+    dt.setTime( ts );
+  console.log( 'dt', dt );
+    var yyyy = dt.getFullYear();
+    var mm = dt.getMonth() + 1;
+    var dd = dt.getDate();
+    var hh = dt.getHours();
+    var nn = dt.getMinutes();
+    var ss = dt.getSeconds();
+    var datetime = yyyy + '-' + ( mm < 10 ? '0' : '' ) + mm + '-' + ( dd < 10 ? '0' : '' ) + dd
+      + 'T' + ( hh < 10 ? '0' : '' ) + hh + ':' + ( nn < 10 ? '0' : '' ) + nn + ':' + ( ss < 10 ? '0' : '' ) + ss;
+  console.log( 'datetime', datetime );
+    return datetime;
+  }else{
+    return "";
+  }
+}
+
 function kanaToHira( kana ) {
   return kana.replace(/[\u30a1-\u30f6]/g, function(match) {
     var chr = match.charCodeAt(0) - 0x60;
     return String.fromCharCode(chr);
   });
+}
+
+//. #15
+function editModalClose(){
+  $('body').removeClass( 'modal-open' );
+  $('.modal-backdrop').remove();
+  $('#editModal').modal( 'hide' );
 }
 </script>
 </body>

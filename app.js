@@ -384,7 +384,7 @@ app.get( '/search/:uuid', function( req, res ){
   var uuid = req.params.uuid;
 
   if( db ){
-    db.find( { selector: { uuid: { "$eq": uuid } }, fields: [ "_id", "_rev", "filename", "type", "title", "timestamp", "uuid" ] }, function( err, result ){
+    db.find( { selector: { uuid: { "$eq": uuid } }, /*limit: 200,*/ fields: [ "_id", "_rev", "filename", "type", "title", "timestamp", "uuid" ] }, function( err, result ){
       if( err ){
         res.status( 400 );
         res.write( JSON.stringify( { status: false, message: err }, 2, null ) );
