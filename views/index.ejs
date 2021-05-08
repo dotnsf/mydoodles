@@ -877,20 +877,19 @@ function timestamp2datetime( ts ){
 }
 
 function timestamp2datetime2( ts ){
-  console.log( 'ts', ts );
+  //console.log( 'ts', ts );
   if( ts ){
     var dt = new Date();
     dt.setTime( ts );
-  console.log( 'dt', dt );
     var yyyy = dt.getFullYear();
     var mm = dt.getMonth() + 1;
     var dd = dt.getDate();
     var hh = dt.getHours();
     var nn = dt.getMinutes();
     var ss = dt.getSeconds();
-    var datetime = yyyy + '-' + ( mm < 10 ? '0' : '' ) + mm + '-' + ( dd < 10 ? '0' : '' ) + dd
-      + 'T' + ( hh < 10 ? '0' : '' ) + hh + ':' + ( nn < 10 ? '0' : '' ) + nn + ':' + ( ss < 10 ? '0' : '' ) + ss;
-  console.log( 'datetime', datetime );
+    var datetime = yyyy + '-' + ( mm < 10 ? '0' : '' ) + mm + '-' + ( dd < 10 ? '0' : '' ) + dd;
+      //+ 'T' + ( hh < 10 ? '0' : '' ) + hh + ':' + ( nn < 10 ? '0' : '' ) + nn + ':' + ( ss < 10 ? '0' : '' ) + ss; //. #17
+    //console.log( 'datetime', datetime );
     return datetime;
   }else{
     return "";
