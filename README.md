@@ -25,7 +25,7 @@ https://mydoodles.mybluemix.net/
 
 ## How to migrate data
 
-0. You can migrate your images to another environment(=another browser). But you need to specify environmental ID value for both from/to. You can check environmental ID in your history dialog.
+0. You can migrate your images to another environment(=another browser). But you need to specify environmental ID value for both from/to. You can check environmental ID in your calendar view.
 
 1. First the one, who want to **transport your data to** other environment, operate **Transport** method in history dialog. He/She need to specify environmental ID for destination.
 
