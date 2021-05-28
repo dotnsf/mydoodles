@@ -97,6 +97,18 @@ a{
   </div>
 </div>
 
+<div class="modal bd-example-modal-lg fade" id="doodleModal" tabindex="-1" role="dialog" aria-labbelledby="doodleModal" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="doodleModalLabel"></h4>
+      </div>
+      <div class="modal-body" id="doodlemodal-body">
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 var y = <%= y %>; 
 var m = <%= m %>; 
@@ -121,7 +133,8 @@ $(function(){
 <% for( var j = 0; j < images.length; j ++ ){ %>
       if( i == <%= images[j].d %> ){
         tr += '<br/><%= images[j].title %>';
-        tr += '<br/><a href="/doodle/<%= images[j]._id %>" id="box_content_<%= images[j]._id %>"><img src="/attachment/<%= images[j]._id %>" width="100"/></a>';
+        //. #19
+        tr += '<br/><a href="#" onClick="showModal(\'<%= images[j].title %>\',\'<%= images[j]._id %>\')" id="box_content_<%= images[j]._id %>"><img src="/attachment/<%= images[j]._id %>" width="100"/></a>';
         //ids.push( '<%= images[j]._id %>' );
       }
 <% } %>
@@ -229,6 +242,13 @@ function nextMonth(){
   }
 
   window.location.href = '/view?id=' + uid + '&y=' + y + '&m=' + m;
+}
+
+//. #19
+function showModal( title, id ){
+  $('#doodleModalLabel').html( title ); 
+  $('#doodlemodal-body').html( '<a target="_blank" href="/doodle/' + id + '"><img src="/attachment/' + id + '" width="100%"/></a>' ); 
+  $('#doodleModal').modal();
 }
 </script>
 </body>
